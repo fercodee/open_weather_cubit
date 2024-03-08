@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_weather_cubit/constants/constants.dart';
+import 'package:open_weather_cubit/cubits/temp_settings/temp_settings_cubit.dart';
 import 'package:open_weather_cubit/cubits/weather/weather_cubit.dart';
 import 'package:open_weather_cubit/pages/search_page.dart';
+import 'package:open_weather_cubit/pages/settings_page.dart';
 import 'package:open_weather_cubit/widgets/error_dialog.dart';
 import 'package:recase/recase.dart';
 
@@ -36,7 +36,15 @@ class _HomePageState extends State<HomePage> {
                   context.read<WeatherCubit>().fetchWeather(_city!);
                 }
               },
-              icon: const Icon(Icons.search))
+              icon: const Icon(Icons.search)),
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const SettingsPage();
+              }));
+            },
+            icon: const Icon(Icons.settings),
+          )
         ],
       ),
       body: _showWeather(),
@@ -44,6 +52,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   String showTemperature(double temperature) {
+    final tempUnit = context.watch<TempSettingsCubit>().state.tempUnit;
+
+    if (tempUnit == TempUnit.fahrenheit) {
+      return '${((temperature * 9 / 5) + 32).toStringAsFixed(2)}℉';
+    }
+
     return '${temperature.toStringAsFixed(2)}℃';
   }
 
